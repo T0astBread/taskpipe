@@ -9,8 +9,8 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.launch
 import java.io.File
+import java.util.stream.Collectors
 import java.util.stream.IntStream
-import kotlin.streams.toList
 
 private val LOGGER = getLogger(ParallelPipelineRunner::class.java.simpleName)
 private val PROCESSOR_LOGGER = getLogger("${ParallelPipelineRunner::class.java.simpleName} -> TaskProcessor")
@@ -28,7 +28,7 @@ class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(curr
         val producer = GlobalScope.launchTaskProducer(pipeline)
         val processors = IntStream.range(0, AMOUNT_OF_PROCESSOR_COROUTINES)
                 .mapToObj { i -> GlobalScope.launchTaskProcessor(producer, i) }
-                .toList()
+                .collect(Collectors.toList())
         for(processor in processors) {
             processor.join()
         }
