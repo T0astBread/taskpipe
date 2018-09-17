@@ -9,7 +9,12 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
-    <orderEntry type="library" name="org.jetbrains.kotlinx:kotlinx-coroutines-core:0.26.0" level="application" />
+    <orderEntry type="library" name="org.jetbrains.kotlinx:kotlinx-coroutines-core:0.26.0" level="project" /> <!-- Only works on my Linux desktop -->
+    <orderEntry type="library" name="org.jetbrains.kotlinx:kotlinx-coroutines-core:0.26.0" level="application" /> <!-- Only works on my Windows laptop -->
+    <!--
+        What if I just add both?
+        -T0ast
+    -->
     <orderEntry type="module-library" scope="TEST">
       <library name="JUnit5.2">
         <CLASSES>
