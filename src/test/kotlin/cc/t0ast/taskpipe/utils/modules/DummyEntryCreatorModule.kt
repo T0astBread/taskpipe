@@ -5,7 +5,7 @@ import java.io.File
 import java.io.PrintWriter
 import java.util.stream.IntStream
 
-class DummyEntryCreatorModule : Module {
+class DummyEntryCreatorModule : Module() {
     override val name = "DummyEntryCreator"
     override val isGroupModule = true
 
@@ -24,6 +24,10 @@ class DummyEntryCreatorModule : Module {
                 it.println("Hello world from entry #$entryIndex")
             }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is DummyEntryCreatorModule
     }
 
     companion object {

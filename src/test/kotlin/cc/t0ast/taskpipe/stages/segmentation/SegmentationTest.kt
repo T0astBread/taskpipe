@@ -3,6 +3,7 @@ package cc.t0ast.taskpipe.stages.segmentation
 import cc.t0ast.taskpipe.utils.modules.ArgDumpModule
 import cc.t0ast.taskpipe.utils.modules.DummyEntryCreatorModule
 import cc.t0ast.taskpipe.utils.parsedPipeline
+import cc.t0ast.taskpipe.utils.segmentedPipeline
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -26,5 +27,12 @@ class SegmentationTest {
         assert(!segment1.isGroupSegment)
         assertEquals(1, segment1.jobs.size)
         assert(segment1.jobs[0].module is ArgDumpModule)
+    }
+
+    @Test
+    fun testSegmentAndEquals() {
+        var createdSegmentedPipeline = segment(parsedPipeline)
+        createdSegmentedPipeline = SegmentedPipeline("SegmentedTestPipeline", createdSegmentedPipeline.segments)
+        assertEquals(segmentedPipeline, createdSegmentedPipeline)
     }
 }

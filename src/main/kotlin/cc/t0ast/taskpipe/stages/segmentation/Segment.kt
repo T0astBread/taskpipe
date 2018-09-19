@@ -10,4 +10,8 @@ class Segment(val startIndex: Int, val jobs: List<Job>) {
     constructor(startIndex: Int): this(startIndex, ArrayList())
 
     override fun toString() = "S$startIndex-${this.startIndex + this.jobs.size}"
+
+    override fun equals(other: Any?): Boolean {
+        return other is Segment && this.startIndex == other.startIndex && this.jobs == other.jobs
+    }
 }

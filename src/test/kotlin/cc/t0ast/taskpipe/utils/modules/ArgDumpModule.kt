@@ -6,7 +6,7 @@ import java.io.PrintWriter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class ArgDumpModule : Module {
+class ArgDumpModule : Module() {
     override val name = "ArgDump"
     override val isGroupModule = false
 
@@ -23,5 +23,9 @@ class ArgDumpModule : Module {
                 it.println("$key -> $value")
             }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is ArgDumpModule
     }
 }

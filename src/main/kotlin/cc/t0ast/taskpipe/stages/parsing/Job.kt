@@ -12,4 +12,8 @@ class Job(val module: Module, val arguments: Map<String, Any>) {
     override fun toString(): String {
         return "Job($module, $arguments)"
     }
+
+    override fun equals(other: Any?): Boolean {
+        return other is Job && this.module == other.module && this.arguments == other.arguments
+    }
 }
