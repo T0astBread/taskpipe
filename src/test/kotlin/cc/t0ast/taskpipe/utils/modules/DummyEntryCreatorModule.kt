@@ -1,6 +1,6 @@
 package cc.t0ast.taskpipe.utils.modules
 
-import cc.t0ast.taskpipe.Module
+import cc.t0ast.taskpipe.modules.Module
 import java.io.File
 import java.io.PrintWriter
 import java.util.stream.IntStream

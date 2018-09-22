@@ -1,0 +1,14 @@
+{
+	"name": "mkentry",
+	"description": "Creates empty entry directories",
+	"type": "group",
+	"parameters": [
+		{
+			"name": "amount_of_entries",
+			"description": "The amount of entries to create"
+		}
+	],
+	"run_command": {
+		"windows": "powershell \"foreach($i in 0..{amount_of_entries}) \\{mkdir \\\"entry$i\\\"\\}\""
+	}
+}

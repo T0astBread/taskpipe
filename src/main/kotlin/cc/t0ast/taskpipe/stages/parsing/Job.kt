@@ -1,6 +1,6 @@
 package cc.t0ast.taskpipe.stages.parsing
 
-import cc.t0ast.taskpipe.Module
+import cc.t0ast.taskpipe.modules.Module
 import java.io.File
 
 class Job(val module: Module, val arguments: Map<String, Any>) {
