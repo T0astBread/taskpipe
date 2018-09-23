@@ -1,9 +1,9 @@
 package cc.t0ast.taskpipe.stages.segmentation
 
-import cc.t0ast.taskpipe.utils.modules.ArgDumpModule
-import cc.t0ast.taskpipe.utils.modules.DummyEntryCreatorModule
-import cc.t0ast.taskpipe.utils.parsedPipeline
-import cc.t0ast.taskpipe.utils.segmentedPipeline
+import cc.t0ast.taskpipe.test_utils.modules.ArgDumpModule
+import cc.t0ast.taskpipe.test_utils.modules.DummyEntryCreatorModule
+import cc.t0ast.taskpipe.test_utils.parsedPipeline
+import cc.t0ast.taskpipe.test_utils.segmentedPipeline
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

@@ -4,6 +4,7 @@ import cc.t0ast.taskpipe.modules.Module
 import cc.t0ast.taskpipe.modules.ProcessModule
 import cc.t0ast.taskpipe.stages.parsing.dtos.ModuleDto
 import cc.t0ast.taskpipe.stages.parsing.dtos.PipelineDTO
+import cc.t0ast.taskpipe.utils.OS_CODE
 import com.google.gson.Gson
 import java.io.File
 
@@ -44,6 +45,7 @@ private fun loadModule(modulesDir: File, moduleName: String): ModuleDto {
     val module = moduleFile.reader().use { reader ->
         GSON.fromJson(reader, ModuleDto::class.java)
     }
+    module.directory = File(modulesDir, moduleName)
     return module
 }
 
@@ -52,7 +54,7 @@ fun ModuleDto.toRealModule(): Module {
             (if(this.run_command is String)
                 this.run_command
             else
-                (this.run_command as Map<String, String>)["windows"])
-                    ?: throw RuntimeException("No module run command found for platform windows")
-    return ProcessModule(this.name, this.type == "group", usedRunCommand)
+                (this.run_command as Map<String, String>)[OS_CODE])
+                    ?: throw RuntimeException("No module run command found for platform $OS_CODE")
+    return ProcessModule(this.name, this.type == "group", usedRunCommand, this.directory)
 }

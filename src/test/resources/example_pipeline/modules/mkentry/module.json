@@ -9,6 +9,7 @@
 		}
 	],
 	"run_command": {
-		"windows": "powershell \"foreach($i in 0..{amount_of_entries}) \\{mkdir \\\"entry$i\\\"\\}\""
+		"windows": "powershell \"foreach($i in 0..{amount_of_entries}) \\{mkdir \\\"entry$i\\\"\\}\"",
+		"linux": "{module_dir}/mkentry.sh {amount_of_entries}"
 	}
 }

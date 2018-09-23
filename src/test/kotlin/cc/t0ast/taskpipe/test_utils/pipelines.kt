@@ -1,7 +1,7 @@
-package cc.t0ast.taskpipe.utils
+package cc.t0ast.taskpipe.test_utils
 
-import cc.t0ast.taskpipe.utils.modules.ArgDumpModule
-import cc.t0ast.taskpipe.utils.modules.DummyEntryCreatorModule
+import cc.t0ast.taskpipe.test_utils.modules.ArgDumpModule
+import cc.t0ast.taskpipe.test_utils.modules.DummyEntryCreatorModule
 import cc.t0ast.taskpipe.stages.parsing.Job
 import cc.t0ast.taskpipe.stages.parsing.ParsedPipeline
 import cc.t0ast.taskpipe.stages.segmentation.Segment

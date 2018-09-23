@@ -1,4 +1,4 @@
-package cc.t0ast.taskpipe.utils.modules
+package cc.t0ast.taskpipe.test_utils.modules
 
 import cc.t0ast.taskpipe.modules.Module
 import java.io.File

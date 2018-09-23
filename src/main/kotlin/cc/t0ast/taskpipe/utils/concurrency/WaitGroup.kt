@@ -2,7 +2,6 @@ package cc.t0ast.taskpipe.utils.concurrency
 
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
 import java.util.concurrent.atomic.AtomicInteger
 
 class WaitGroup(initialValue: Int = 0) {

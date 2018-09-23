@@ -1,10 +1,9 @@
 package cc.t0ast.taskpipe.stages.parsing
 
 import cc.t0ast.taskpipe.modules.ProcessModule
-import cc.t0ast.taskpipe.utils.AMOUNT_OF_ENTRIES_IN_RUN
-import cc.t0ast.taskpipe.utils.EXAMPLE_PIPELINE_DIR
+import cc.t0ast.taskpipe.test_utils.AMOUNT_OF_ENTRIES_IN_RUN
+import cc.t0ast.taskpipe.test_utils.EXAMPLE_PIPELINE_DIR
 import org.junit.jupiter.api.Test
-import java.io.File
 import java.lang.Integer.parseInt
 import kotlin.test.assertEquals
 
