@@ -6,7 +6,7 @@ import cc.t0ast.taskpipe.stages.segmentation.segment
 import cc.t0ast.taskpipe.test_utils.AMOUNT_OF_ENTRIES_IN_RUN
 import cc.t0ast.taskpipe.test_utils.EXAMPLE_PIPELINE_DIR
 import cc.t0ast.taskpipe.test_utils.createTestDirectory
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File

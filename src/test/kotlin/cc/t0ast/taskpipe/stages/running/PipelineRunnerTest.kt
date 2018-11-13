@@ -3,7 +3,7 @@ package cc.t0ast.taskpipe.stages.running
 import cc.t0ast.taskpipe.test_utils.AMOUNT_OF_ENTRIES_IN_RUN
 import cc.t0ast.taskpipe.test_utils.createTestDirectory
 import cc.t0ast.taskpipe.test_utils.segmentedPipeline
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File

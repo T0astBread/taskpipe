@@ -3,11 +3,11 @@ package cc.t0ast.taskpipe.stages.running
 import cc.t0ast.taskpipe.stages.segmentation.SegmentedPipeline
 import cc.t0ast.taskpipe.utils.concurrency.WaitGroup
 import cc.t0ast.taskpipe.utils.logging.getLogger
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.produce
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.stream.Collectors
 import java.util.stream.IntStream
