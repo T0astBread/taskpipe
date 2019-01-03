@@ -157,3 +157,7 @@ gradle-app.setting
 
 
 # End of https://www.gitignore.io/api/git,joe,java,kotlin,gradle,intellij
+
+
+# Project specific
+/test_runs/
