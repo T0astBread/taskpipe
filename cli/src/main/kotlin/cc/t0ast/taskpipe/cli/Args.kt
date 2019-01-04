@@ -5,6 +5,14 @@ import com.xenomachina.argparser.default
 import java.io.File
 
 class Args(parser: ArgParser) {
+    private var generatedOutputDir: File? = null
+        get() {
+            if(field == null) {
+                field = pipelineDirectory.resolve("run_%time%".timeStamped())
+            }
+            return field
+        }
+
     val pipelineDirectory by parser.storing(
         "-p", "--pipeline",
         help = "the directory to read the pipeline configuration from; will default to the current directory"
@@ -15,7 +23,7 @@ class Args(parser: ArgParser) {
         "-o", "--output",
         help = "the directory to put the output files in; will default to the current directory"
     ) { File(this) }
-        .default { pipelineDirectory.resolve("run_%time%".timeStamped()) }
+        .default { generatedOutputDir!! }
 
     val isVerbose by parser.flagging(
         "-v", "--verbose",

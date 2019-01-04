@@ -12,7 +12,6 @@ class Main {
         fun main(args: Array<String>) = mainBody {
             ArgParser(args).parseInto(::Args).run {
                 val cliArgs = this
-                cliArgs.pipelineDirectory.mkdirs()
                 cliArgs.outputDirectory.mkdirs()
                 shouldOutputLogs = cliArgs.isVerbose
                 runBlocking {
