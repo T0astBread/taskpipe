@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
-    implementation(project(":runner"))
+    compile(project(":runner"))
     compile("com.xenomachina:kotlin-argparser:2.0.7")
     testCompile("junit", "junit", "4.9")
     testCompile("com.github.stefanbirkner:system-rules:1.19.0")
