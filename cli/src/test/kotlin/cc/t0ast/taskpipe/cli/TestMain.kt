@@ -20,6 +20,7 @@ class TestMain {
     // Can't test err logs from logging facilities with System Rules
     // That's why all tests solely dependent on System.err logs (like testVerboseRun) never fail
     // and all System.err assertions are commented out. DO NOT REMOVE THESE TESTS/ASSERTIONS!
+    // SEE https://github.com/T0astBread/taskpipe/issues/1
 
 //    @Rule
 //    @JvmField
