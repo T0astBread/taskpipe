@@ -1,19 +1,24 @@
 package cc.t0ast.taskpipe.cli
 
 import com.xenomachina.argparser.ArgParser
+import com.xenomachina.argparser.default
+import java.io.File
 
 class Args(parser: ArgParser) {
-    val command by parser.positional(
-        "COMMAND",
-        help = "The command to execute; Possible values: ${Command
-            .values()
-            .map { it.toString() }
-            .map { it.toLowerCase() }
-            .joinToString("|")
-        }. See \"help\" for more details on each command."
-    ) { Command.valueOf(this.toUpperCase()) }
+    val pipelineDirectory by parser.storing(
+        "-p", "--pipeline",
+        help = "the directory to read the pipeline configuration from; will default to the current directory"
+    ) { File(this) }
+        .default { File(System.getProperty("user.dir")) }
 
-    enum class Command {
-        RUN, HELP
-    }
+    val outputDirectory by parser.storing(
+        "-o", "--output",
+        help = "the directory to put the output files in; will default to the current directory"
+    ) { File(this) }
+        .default { pipelineDirectory.resolve("run_%time%".timeStamped()) }
+
+    val isVerbose by parser.flagging(
+        "-v", "--verbose",
+        help = "enables verbose mode; In verbose mode all output from the pipeline runner is printed to the console."
+    )
 }

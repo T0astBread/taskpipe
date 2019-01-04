@@ -14,8 +14,8 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1")
-    implementation("com.google.code.gson:gson:2.8.5")
+    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1")
+    compile("com.google.code.gson:gson:2.8.5")
     testCompile("org.junit.jupiter:junit-jupiter-api:5.3.2")
     testCompile("org.junit.jupiter:junit-jupiter-params:5.3.2")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.2")

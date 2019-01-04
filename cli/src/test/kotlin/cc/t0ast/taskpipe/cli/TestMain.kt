@@ -1,7 +1,6 @@
 package cc.t0ast.taskpipe.cli
 
 import cc.t0ast.taskpipe.cli.test_utils.execSelf
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -17,6 +16,15 @@ class TestMain {
     @JvmField
     val outRule = SystemOutRule().enableLog()
 
+    // ISSUE REGARDING System.err DEPENDENT TESTS:
+    // Can't test err logs from logging facilities with System Rules
+    // That's why all tests solely dependent on System.err logs (like testVerboseRun) never fail
+    // and all System.err assertions are commented out. DO NOT REMOVE THESE TESTS/ASSERTIONS!
+
+//    @Rule
+//    @JvmField
+//    val errRule = SystemErrRule().enableLog()
+
     @Test
     fun testHelp() {
         exitRule.expectSystemExitWithStatus(0)
@@ -28,7 +36,15 @@ class TestMain {
 
     @Test
     fun testRun() {
-        execSelf("run")
-        assertEquals("RUN\n", outRule.log)
+        execSelf("-p", "../runner/src/test/resources/example_pipeline", "-o", "./test_runs/%time%".timeStamped())
+//        assertFalse(errRule.log.contains("Execution of pipeline ExamplePipeline completed"))
+        assertTrue(outRule.log.endsWith("Done\n"))
+    }
+
+    @Test
+    fun testVerboseRun() {
+        execSelf("-p", "../runner/src/test/resources/example_pipeline", "-o", "./test_runs/%time%".timeStamped(), "-v")
+//        assertTrue(errRule.log.contains("Execution of pipeline ExamplePipeline completed"))
+        assertTrue(outRule.log.endsWith("Done\n"))
     }
 }
