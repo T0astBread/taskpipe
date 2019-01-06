@@ -9,6 +9,7 @@
 		},
 		{
 			"module": "echo",
+			"operation_mode": "individual",
 			"arguments": {
 				"text": "Hello world from the echo module!",
 				"target": "content/hellow.txt"

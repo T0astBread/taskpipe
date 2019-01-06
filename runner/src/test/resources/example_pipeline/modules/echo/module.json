@@ -1,7 +1,7 @@
 {
 	"name": "echo",
 	"description": "Echoes text into a file",
-	"type": "individual",
+	"operation_modes": "individual|group",
 	"parameters": [
 		{
 			"name": "text",

@@ -1,5 +1,6 @@
 package cc.t0ast.taskpipe.test_utils.modules
 
+import cc.t0ast.taskpipe.OperationMode
 import cc.t0ast.taskpipe.modules.Module
 import java.io.File
 import java.io.PrintWriter
@@ -7,7 +8,7 @@ import java.util.stream.IntStream
 
 class DummyEntryCreatorModule : Module() {
     override val name = "DummyEntryCreator"
-    override val isGroupModule = true
+    override val supportedOperationModes: Array<OperationMode> = arrayOf(OperationMode.GROUP)
 
     override suspend fun run(workingDirectory: File, arguments: Map<String, Any>) {
         IntStream.range(0, arguments[AMOUNT_OF_ENTRIES] as Int).forEach { entryIndex ->

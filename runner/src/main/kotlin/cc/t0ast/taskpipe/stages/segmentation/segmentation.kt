@@ -1,5 +1,6 @@
 package cc.t0ast.taskpipe.stages.segmentation
 
+import cc.t0ast.taskpipe.OperationMode
 import cc.t0ast.taskpipe.stages.parsing.ParsedPipeline
 
 fun segment(pipeline: ParsedPipeline): SegmentedPipeline {
@@ -10,7 +11,7 @@ fun segment(pipeline: ParsedPipeline): SegmentedPipeline {
         if(openSegment == null) {
             openSegment = Segment(i)
         }
-        else if(openSegment!!.isGroupSegment != job.module.isGroupModule) {
+        else if(openSegment!!.isGroupSegment != (job.operationMode == OperationMode.GROUP)) {
             segments.add(openSegment!!)
             openSegment = Segment(i)
         }

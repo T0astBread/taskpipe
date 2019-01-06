@@ -1,9 +1,14 @@
 package cc.t0ast.taskpipe.stages.parsing
 
+import cc.t0ast.taskpipe.OperationMode
 import cc.t0ast.taskpipe.modules.Module
 import java.io.File
 
-class Job(val module: Module, val arguments: Map<String, Any>) {
+class Job(
+    val module: Module,
+    val operationMode: OperationMode,
+    val arguments: Map<String, Any>
+) {
 
     suspend fun run(workingDirectory: File) {
         this.module.run(workingDirectory, this.arguments)

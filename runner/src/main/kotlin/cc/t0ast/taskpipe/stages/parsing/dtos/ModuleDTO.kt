@@ -5,10 +5,10 @@ import java.io.File
 typealias UnifiedRunCommand = String
 typealias SplitRunCommand = Map<String, String>
 
-data class ModuleDto(
+data class ModuleDTO(
         val name: String,
         val description: String,
-        val type: String,
+        val operation_modes: String,
         val parameters: List<Parameter>,
         val run_command: Any,
         var directory: File

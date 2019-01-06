@@ -1,5 +1,6 @@
 package cc.t0ast.taskpipe.stages.parsing
 
+import cc.t0ast.taskpipe.OperationMode
 import cc.t0ast.taskpipe.modules.ProcessModule
 import cc.t0ast.taskpipe.test_utils.AMOUNT_OF_ENTRIES_IN_RUN
 import cc.t0ast.taskpipe.test_utils.EXAMPLE_PIPELINE_DIR
@@ -24,7 +25,8 @@ class ParsingTest {
         assert(job.module is ProcessModule)
 
         assertEquals("mkentry", job.module.name)
-        assert(job.module.isGroupModule)
+        assert(job.module.supportedOperationModes.contentEquals(arrayOf(OperationMode.GROUP)))
+        assertEquals(OperationMode.GROUP, job.operationMode)
 
         assertEquals(1, job.arguments.size)
         assertEquals(AMOUNT_OF_ENTRIES_IN_RUN, parseInt(job.arguments["amount_of_entries"] as String))
@@ -34,7 +36,8 @@ class ParsingTest {
         assert(job.module is ProcessModule)
 
         assertEquals("echo", job.module.name)
-        assert(!job.module.isGroupModule)
+        assert(job.module.supportedOperationModes.contentEquals(arrayOf(OperationMode.INDIVIDUAL, OperationMode.GROUP)))
+        assertEquals(OperationMode.INDIVIDUAL, job.operationMode)
 
         assertEquals(2, job.arguments.size)
         assertEquals("Hello world from the echo module!", job.arguments["text"])

@@ -1,5 +1,6 @@
 package cc.t0ast.taskpipe.modules
 
+import cc.t0ast.taskpipe.OperationMode
 import cc.t0ast.taskpipe.utils.logging.getLogger
 import cc.t0ast.taskpipe.utils.splitIntoArgs
 import java.io.File
@@ -13,7 +14,7 @@ val LOGGER = getLogger(ProcessModule::class.java.simpleName)
 
 class ProcessModule(
         override val name: String,
-        override val isGroupModule: Boolean,
+        override val supportedOperationModes: Array<OperationMode>,
         val runCommand: String,
         val moduleDir: File
 ): Module() {

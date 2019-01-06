@@ -1,11 +1,12 @@
 package cc.t0ast.taskpipe.stages.segmentation
 
+import cc.t0ast.taskpipe.OperationMode
 import cc.t0ast.taskpipe.stages.parsing.Job
 
 class Segment(val startIndex: Int, val jobs: List<Job>) {
 
     val isGroupSegment
-        get() = this.jobs.isEmpty() || this.jobs[0].module.isGroupModule
+        get() = this.jobs.isEmpty() || this.jobs[0].operationMode == OperationMode.GROUP
 
     constructor(startIndex: Int): this(startIndex, ArrayList())
 

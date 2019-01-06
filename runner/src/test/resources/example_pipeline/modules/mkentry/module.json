@@ -1,7 +1,7 @@
 {
 	"name": "mkentry",
 	"description": "Creates empty entry directories",
-	"type": "group",
+	"operation_modes": "group",
 	"parameters": [
 		{
 			"name": "amount_of_entries",
