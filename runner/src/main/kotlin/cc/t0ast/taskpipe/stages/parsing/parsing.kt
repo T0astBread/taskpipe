@@ -39,12 +39,16 @@ private fun loadModules(pipeline: PipelineDTO, pipelineDir: File): Map<String, M
 }
 
 private fun loadModule(modulesDir: File, moduleName: String): ModuleDTO {
-    val moduleFile = File(modulesDir, "$moduleName/module.json")
-    val module = moduleFile.reader().use { reader ->
-        GSON.fromJson(reader, ModuleDTO::class.java)
+    try {
+        val moduleFile = File(modulesDir, "$moduleName/module.json")
+        val module = moduleFile.reader().use { reader ->
+            GSON.fromJson(reader, ModuleDTO::class.java)
+        }
+        module.directory = File(modulesDir, moduleName)
+        return module
+    } catch (exception: Exception) {
+        throw RuntimeException("Failed while parsing module $moduleName")
     }
-    module.directory = File(modulesDir, moduleName)
-    return module
 }
 
 fun ModuleDTO.toRealModule(): Module {
@@ -64,10 +68,14 @@ fun ModuleDTO.toRealModule(): Module {
 
 private fun loadJobs(pipelineDTO: PipelineDTO, moduleDTOs: Map<String, ModuleDTO>): List<Job> {
     return pipelineDTO.jobs.map { jobDTO ->
-        val moduleDTO = moduleDTOs[jobDTO.module] ?: throw RuntimeException("Module ${jobDTO.module} was not found")
-        val module = moduleDTO.toRealModule()
-        val operationMode = getUsedOperationMode(jobDTO, module)
-        return@map Job(module, operationMode, jobDTO.arguments)
+        try {
+            val moduleDTO = moduleDTOs[jobDTO.module] ?: throw RuntimeException("Module ${jobDTO.module} was not found")
+            val module = moduleDTO.toRealModule()
+            val operationMode = getUsedOperationMode(jobDTO, module)
+            return@map Job(module, operationMode, jobDTO.arguments)
+        } catch (exception: Exception) {
+            throw RuntimeException("Failed while parsing job $jobDTO")
+        }
     }
 }
 
