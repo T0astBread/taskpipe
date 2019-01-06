@@ -15,13 +15,8 @@ private val GSON = Gson()
 fun parsePipeline(pipelineDir: File): ParsedPipeline {
     val pipelineDTO = loadPipeline(pipelineDir)
     val moduleDTOs = loadModules(pipelineDTO, pipelineDir)
-    val modules = pipelineDTO.jobs.map { jobDTO ->
-        val moduleDTO = moduleDTOs[jobDTO.module] ?: throw RuntimeException("Module ${jobDTO.module} was not found")
-        val module = moduleDTO.toRealModule()
-        val operationMode = getUsedOperationMode(jobDTO, module)
-        return@map Job(module, operationMode, jobDTO.arguments)
-    }
-    return ParsedPipeline(pipelineDTO.name, modules)
+    val jobs = loadJobs(pipelineDTO, moduleDTOs)
+    return ParsedPipeline(pipelineDTO.name, jobs)
 }
 
 private fun loadPipeline(pipelineDir: File): PipelineDTO {
@@ -65,6 +60,15 @@ fun ModuleDTO.toRealModule(): Module {
                 (this.run_command as Map<String, String>)[OS_CODE])
                     ?: throw RuntimeException("No module run command found for platform $OS_CODE")
     return ProcessModule(this.name, supportedOperationModes, usedRunCommand, this.directory)
+}
+
+private fun loadJobs(pipelineDTO: PipelineDTO, moduleDTOs: Map<String, ModuleDTO>): List<Job> {
+    return pipelineDTO.jobs.map { jobDTO ->
+        val moduleDTO = moduleDTOs[jobDTO.module] ?: throw RuntimeException("Module ${jobDTO.module} was not found")
+        val module = moduleDTO.toRealModule()
+        val operationMode = getUsedOperationMode(jobDTO, module)
+        return@map Job(module, operationMode, jobDTO.arguments)
+    }
 }
 
 private fun getUsedOperationMode(jobDTO: JobDTO, module: Module): OperationMode {
