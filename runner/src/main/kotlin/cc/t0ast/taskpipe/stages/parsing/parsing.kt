@@ -47,7 +47,7 @@ private fun loadModule(modulesDir: File, moduleName: String): ModuleDTO {
         module.directory = File(modulesDir, moduleName)
         return module
     } catch (exception: Exception) {
-        throw RuntimeException("Failed while parsing module $moduleName")
+        throw RuntimeException("Failed while parsing module $moduleName", exception)
     }
 }
 
@@ -74,7 +74,7 @@ private fun loadJobs(pipelineDTO: PipelineDTO, moduleDTOs: Map<String, ModuleDTO
             val operationMode = getUsedOperationMode(jobDTO, module)
             return@map Job(module, operationMode, jobDTO.arguments)
         } catch (exception: Exception) {
-            throw RuntimeException("Failed while parsing job $jobDTO")
+            throw RuntimeException("Failed while parsing job $jobDTO", exception)
         }
     }
 }
