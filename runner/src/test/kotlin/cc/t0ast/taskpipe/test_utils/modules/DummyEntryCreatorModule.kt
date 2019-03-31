@@ -11,8 +11,10 @@ class DummyEntryCreatorModule : Module() {
     override val supportedOperationModes: Array<OperationMode> = arrayOf(OperationMode.GROUP)
 
     override suspend fun run(workingDirectory: File, arguments: Map<String, Any>) {
+        val contentDir = File(workingDirectory, "content")
+
         IntStream.range(0, arguments[AMOUNT_OF_ENTRIES] as Int).forEach { entryIndex ->
-            val entryDir = File(workingDirectory, "entry$entryIndex")
+            val entryDir = File(contentDir, "entry$entryIndex")
             entryDir.mkdir()
 
             val entryContentDir = File(entryDir, "content")

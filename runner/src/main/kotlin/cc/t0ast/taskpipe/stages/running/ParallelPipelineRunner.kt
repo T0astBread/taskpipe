@@ -23,6 +23,8 @@ class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(curr
     private val taskWaitGroup = WaitGroup()
 
     override suspend fun run(pipeline: SegmentedPipeline) {
+        super.run(pipeline)
+
         LOGGER.fine("Running pipeline ${pipeline.name}")
 
         val producer = GlobalScope.launchTaskProducer(pipeline)  // start the producer
@@ -56,7 +58,7 @@ class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(curr
             }
             else {  // if the operation_mode is individual: post tasks with the segment for each entry folder
                 LOGGER.finer("Enqueueing individual segment $segment")
-                currentWorkingDirectory.listFiles().forEach { entryDir ->
+                contentDirectory.listFiles().forEach { entryDir ->
                     send(Task(entryDir, segment.jobs))
                     taskWaitGroup.add()
                     PRODUCER_LOGGER.finest("Enqueued task chain from segment $segment for entry $entryDir")
