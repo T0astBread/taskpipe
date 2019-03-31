@@ -28,12 +28,16 @@ class PipelineRunnerTest {
         assert(rootDir.exists())
         assert(rootDir.isDirectory)
 
-        val entries = rootDir.list()
+        val contentDir = File(rootDir, "content")
+        assert(contentDir.exists())
+        assert(contentDir.isDirectory)
+
+        val entries = contentDir.list()
         assertEquals(AMOUNT_OF_ENTRIES_IN_RUN, entries.size)
 
         IntStream.range(0, AMOUNT_OF_ENTRIES_IN_RUN).forEach { assert(entries.contains("entry$it")) }
 
-        entries.map { File(rootDir, it) }
+        entries.map { File(contentDir, it) }
                 .forEach { checkGeneratedEntryFilesystem(it) }
     }
 
