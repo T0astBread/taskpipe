@@ -1,0 +1,25 @@
+{
+	"name": "ExamplePipelineWithBreakpoint",
+	"jobs": [
+		{
+			"module": "mkentry",
+			"arguments": {
+				"amount_of_entries": 32
+			}
+		},
+		{
+			"module": "breakpoint",
+			"arguments": {
+				"message": "This is a test breakpoint; Verify that it works correctly!"
+			}
+		},
+		{
+			"module": "echo",
+			"operation_mode": "individual",
+			"arguments": {
+				"text": "Hello world from the echo module!",
+				"target": "content/hellow.txt"
+			}
+		}
+	]
+}
