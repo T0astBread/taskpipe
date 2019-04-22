@@ -2,6 +2,7 @@ package cc.t0ast.taskpipe.stages.parsing
 
 import cc.t0ast.taskpipe.OperationMode
 import cc.t0ast.taskpipe.modules.Module
+import cc.t0ast.taskpipe.stages.running.RunContext
 import java.io.File
 
 class Job(
@@ -10,8 +11,8 @@ class Job(
     val arguments: Map<String, Any>
 ) {
 
-    suspend fun run(workingDirectory: File) {
-        this.module.run(workingDirectory, this.arguments)
+    suspend fun run(runContext: RunContext, workingDirectory: File) {
+        this.module.run(runContext, workingDirectory, this.arguments)
     }
 
     override fun toString(): String {

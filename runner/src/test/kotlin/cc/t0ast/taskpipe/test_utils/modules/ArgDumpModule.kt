@@ -2,6 +2,7 @@ package cc.t0ast.taskpipe.test_utils.modules
 
 import cc.t0ast.taskpipe.OperationMode
 import cc.t0ast.taskpipe.modules.Module
+import cc.t0ast.taskpipe.stages.running.RunContext
 import java.io.File
 import java.io.PrintWriter
 import java.time.LocalDateTime
@@ -11,7 +12,7 @@ class ArgDumpModule : Module() {
     override val name = "ArgDump"
     override val supportedOperationModes: Array<OperationMode> = arrayOf(OperationMode.INDIVIDUAL)
 
-    override suspend fun run(workingDirectory: File, arguments: Map<String, Any>) {
+    override suspend fun run(runContext: RunContext, workingDirectory: File, arguments: Map<String, Any>) {
         val dataDirectory = File(workingDirectory, "module_data/ArgDump")
         dataDirectory.mkdirs()
 

@@ -27,9 +27,11 @@ class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(curr
 
         LOGGER.fine("Running pipeline ${pipeline.name}")
 
+        val runContext = ParallelRunContext()
+
         val producer = GlobalScope.launchTaskProducer(pipeline)  // start the producer
         val processors = IntStream.range(0, AMOUNT_OF_PROCESSOR_COROUTINES)  // Start the processors with sequential IDs
-                .mapToObj { i -> GlobalScope.launchTaskProcessor(producer, i) }
+                .mapToObj { i -> GlobalScope.launchTaskProcessor(producer, i, runContext) }
                 .collect(Collectors.toList())
         for(processor in processors) {  // Wait for all the processors to finish; processors should only finish when the producer is finished
             processor.join()
@@ -76,7 +78,11 @@ class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(curr
     }
 
     // PROCESSOR CODE
-    private fun CoroutineScope.launchTaskProcessor(taskChannel: ReceiveChannel<Task>, processorId: Int? = null) = launch {
+    private fun CoroutineScope.launchTaskProcessor(
+        taskChannel: ReceiveChannel<Task>,
+        processorId: Int? = null,
+        runContext: RunContext
+    ) = launch {
         PROCESSOR_LOGGER.fine("#$processorId started")
 
         // task-handler (a for-loop over a RecieveChannel is Kotlin coroutine-speak for "hey this is how you handle messages"
@@ -86,7 +92,7 @@ class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(curr
             PROCESSOR_LOGGER.finest("#$processorId took task with modules [${task.jobs.map { job ->
                 job.module.name
             }.joinToString(", ")}]")
-            task.run()  // just run the task
+            task.run(runContext)  // just run the task
             taskWaitGroup.done()  // report that the task is done
         }
 
