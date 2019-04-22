@@ -1,6 +1,7 @@
 package cc.t0ast.taskpipe.test_utils
 
 import cc.t0ast.taskpipe.OperationMode
+import cc.t0ast.taskpipe.modules.BreakpointModule
 import cc.t0ast.taskpipe.test_utils.modules.ArgDumpModule
 import cc.t0ast.taskpipe.test_utils.modules.DummyEntryCreatorModule
 import cc.t0ast.taskpipe.stages.parsing.Job
@@ -28,6 +29,26 @@ val segmentedPipeline = SegmentedPipeline("SegmentedTestPipeline", listOf(
                 ))
         )),
         Segment(1, listOf(
+                Job(ArgDumpModule(), OperationMode.INDIVIDUAL, hashMapOf(
+                        "String" to "I'm a string",
+                        "Int" to 1234,
+                        "Boolean" to true
+                ))
+        ))
+))
+
+val segmentedPipelineWithBreakpoint = SegmentedPipeline("SegmentedTestPipeline", listOf(
+        Segment(0, listOf(
+                Job(DummyEntryCreatorModule(), OperationMode.GROUP, hashMapOf(
+                        DummyEntryCreatorModule.AMOUNT_OF_ENTRIES to AMOUNT_OF_ENTRIES_IN_RUN
+                ))
+        )),
+        Segment(1, listOf(
+                Job(BreakpointModule(), OperationMode.GROUP, hashMapOf(
+                        "message" to "This is a test breakpoint; Verify that it works correctly!"
+                ))
+        )),
+        Segment(2, listOf(
                 Job(ArgDumpModule(), OperationMode.INDIVIDUAL, hashMapOf(
                         "String" to "I'm a string",
                         "Int" to 1234,
