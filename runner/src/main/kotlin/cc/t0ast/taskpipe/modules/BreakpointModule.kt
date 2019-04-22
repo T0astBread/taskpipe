@@ -10,6 +10,9 @@ class BreakpointModule : Module() {
 
     override suspend fun run(runContext: RunContext, workingDirectory: File, arguments: Map<String, Any>) {
         val message = arguments["message"]
-        runContext.stopExecution("Breakpoint hit", message)
+        val name = arguments["name"]
+
+        runContext.stopExecution("Breakpoint hit ($name)", arguments)
+        println(message)
     }
 }
