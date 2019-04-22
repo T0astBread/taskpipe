@@ -27,12 +27,14 @@ class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(curr
 
         LOGGER.fine("Running pipeline ${pipeline.name}")
 
-        val runContext = ParallelRunContext()
-
         val producer = GlobalScope.launchTaskProducer(pipeline)  // start the producer
+        val runContext = ParallelRunContext(producer)  // Create the run context
+
         val processors = IntStream.range(0, AMOUNT_OF_PROCESSOR_COROUTINES)  // Start the processors with sequential IDs
                 .mapToObj { i -> GlobalScope.launchTaskProcessor(producer, i, runContext) }
                 .collect(Collectors.toList())
+        processors.forEach { runContext.registerProcessor(it) }  // Register the processors in the run context
+
         for(processor in processors) {  // Wait for all the processors to finish; processors should only finish when the producer is finished
             processor.join()
         }
@@ -81,7 +83,7 @@ class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(curr
     private fun CoroutineScope.launchTaskProcessor(
         taskChannel: ReceiveChannel<Task>,
         processorId: Int? = null,
-        runContext: RunContext
+        runContext: ParallelRunContext
     ) = launch {
         PROCESSOR_LOGGER.fine("#$processorId started")
 
