@@ -23,7 +23,13 @@ class PipelineRunnerTest {
         runner.run(pipeline)
 
         checkGeneratedFilesystem(testDir) { entryRoot ->
-            checkBasicEntryFilesystem2(entryRoot)
+            checkEntryRootDir(entryRoot)
+
+            val foldersInEntry = entryRoot.list()
+            assertEquals(2, foldersInEntry.size)
+            checkContentFolder(foldersInEntry)
+            checkModuleDataFolder(foldersInEntry)
+
             checkEchoJobOutput(entryRoot)
             checkArgDumpJobOutput(entryRoot)
         }
@@ -38,12 +44,39 @@ class PipelineRunnerTest {
         runner.run(pipeline)
 
         checkGeneratedFilesystem(testDir) { entryRoot ->
-            checkBasicEntryFilesystem1(entryRoot)
+            checkEntryRootDir(entryRoot)
+
+            val foldersInEntry = entryRoot.list()
+            assertEquals(1, foldersInEntry.size)
+            checkContentFolder(foldersInEntry)
+
             checkEchoJobOutput(entryRoot)
         }
     }
 
-    private fun checkGeneratedFilesystem(rootDir: File, checkEntry: (File) -> Unit) {
+    @Test
+    fun testRunFromStartIndex() = runBlocking {
+        val testDir = createTestDirectory()
+        val runner = ParallelPipelineRunner(testDir)
+        val pipeline = segmentedPipeline
+
+        val dummyEntry = File(testDir, "content/entry0")
+        dummyEntry.mkdirs()
+
+        runner.run(pipeline, 1)
+
+        checkGeneratedFilesystem(testDir, false) { entryRoot ->
+            checkEntryRootDir(entryRoot)
+
+            val foldersInEntry = entryRoot.list()
+            assertEquals(1, foldersInEntry.size)
+            checkModuleDataFolder(foldersInEntry)
+
+            checkArgDumpJobOutput(entryRoot)
+        }
+    }
+
+    private fun checkGeneratedFilesystem(rootDir: File, checkAmountOfEntries: Boolean = true, checkEntry: (File) -> Unit) {
         println("Checking generated filesystem at ${rootDir.path}")
 
         assert(rootDir.exists())
@@ -54,30 +87,25 @@ class PipelineRunnerTest {
         assert(contentDir.isDirectory)
 
         val entries = contentDir.list()
-        assertEquals(AMOUNT_OF_ENTRIES_IN_RUN, entries.size)
-
-        IntStream.range(0, AMOUNT_OF_ENTRIES_IN_RUN).forEach { assert(entries.contains("entry$it")) }
+        if(checkAmountOfEntries) {
+            assertEquals(AMOUNT_OF_ENTRIES_IN_RUN, entries.size)
+            IntStream.range(0, AMOUNT_OF_ENTRIES_IN_RUN).forEach { assert(entries.contains("entry$it")) }
+        }
 
         entries.map { File(contentDir, it) }
             .forEach { checkEntry(it) }
     }
 
-    private fun checkBasicEntryFilesystem1(entryRoot: File) {
+    private fun checkEntryRootDir(entryRoot: File) {
         assert(entryRoot.exists())
         assert(entryRoot.isDirectory)
+    }
 
-        val foldersInEntry = entryRoot.list()
-        assertEquals(1, foldersInEntry.size)
+    private fun checkContentFolder(foldersInEntry: Array<String>) {
         assert(foldersInEntry.contains("content"))
     }
 
-    private fun checkBasicEntryFilesystem2(entryRoot: File) {
-        assert(entryRoot.exists())
-        assert(entryRoot.isDirectory)
-
-        val foldersInEntry = entryRoot.list()
-        assertEquals(2, foldersInEntry.size)
-        assert(foldersInEntry.contains("content"))
+    private fun checkModuleDataFolder(foldersInEntry: Array<String>) {
         assert(foldersInEntry.contains("module_data"))
     }
 
