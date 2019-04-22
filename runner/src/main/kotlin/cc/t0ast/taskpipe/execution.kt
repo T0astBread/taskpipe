@@ -7,8 +7,13 @@ import cc.t0ast.taskpipe.stages.segmentation.segment
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
-suspend fun executePipeline(pipelineDir: File, outputDir: File, runner: PipelineRunner = ParallelPipelineRunner(outputDir)) {
+suspend fun executePipeline(
+    pipelineDir: File,
+    outputDir: File,
+    startJobIndex: Int,
+    runner: PipelineRunner = ParallelPipelineRunner(outputDir)
+) {
     val parsedPipeline = parsePipeline(pipelineDir)
     val segmentedPipeline = segment(parsedPipeline)
-    runBlocking { runner.run(segmentedPipeline) }
+    runBlocking { runner.run(segmentedPipeline, startJobIndex) }
 }

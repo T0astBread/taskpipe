@@ -25,6 +25,12 @@ class Args(parser: ArgParser) {
     ) { File(this) }
         .default { generatedOutputDir!! }
 
+    val startJobIndex by parser.storing(
+        "--start-from",
+        help = "from which job index to start the execution (default is 0)"
+    ) { toInt() }
+        .default(0)
+
     val isVerbose by parser.flagging(
         "-v", "--verbose",
         help = "enables verbose mode; In verbose mode all output from the pipeline runner is printed to the console."

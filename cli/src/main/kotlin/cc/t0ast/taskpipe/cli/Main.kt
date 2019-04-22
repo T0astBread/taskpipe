@@ -15,7 +15,7 @@ class Main {
                 cliArgs.outputDirectory.mkdirs()
                 shouldOutputLogs = cliArgs.isVerbose
                 runBlocking {
-                    executePipeline(cliArgs.pipelineDirectory, cliArgs.outputDirectory)
+                    executePipeline(cliArgs.pipelineDirectory, cliArgs.outputDirectory, cliArgs.startJobIndex)
                 }
                 println("Done")
             }
