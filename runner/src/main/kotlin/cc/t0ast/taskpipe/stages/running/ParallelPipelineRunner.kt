@@ -22,12 +22,12 @@ private const val AMOUNT_OF_PROCESSOR_COROUTINES = 6  // for the sake of this pr
 class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(currentWorkingDirectory) {
     private val taskWaitGroup = WaitGroup()
 
-    override suspend fun run(pipeline: SegmentedPipeline) {
-        super.run(pipeline)
+    override suspend fun run(pipeline: SegmentedPipeline, startJobIndex: Int) {
+        super.run(pipeline, startJobIndex)
 
         LOGGER.fine("Running pipeline ${pipeline.name}")
 
-        val producer = GlobalScope.launchTaskProducer(pipeline)  // start the producer
+        val producer = GlobalScope.launchTaskProducer(pipeline, startJobIndex)  // start the producer
         val runContext = ParallelRunContext(producer)  // Create the run context
 
         val processors = IntStream.range(0, AMOUNT_OF_PROCESSOR_COROUTINES)  // Start the processors with sequential IDs
@@ -43,41 +43,56 @@ class ParallelPipelineRunner(currentWorkingDirectory: File): PipelineRunner(curr
     }
 
     // PRODUCER CODE
-    private fun CoroutineScope.launchTaskProducer(pipeline: SegmentedPipeline) = produce(capacity = TASK_QUEUE_CAPACITY) {
-        PRODUCER_LOGGER.fine("Started")
+    private fun CoroutineScope.launchTaskProducer(pipeline: SegmentedPipeline, startJobIndex: Int) =
+        produce(capacity = TASK_QUEUE_CAPACITY) {
+            PRODUCER_LOGGER.fine("Started")
 
-        // iterate over segments in pipeline
-        for(segment in pipeline.segments) {  // take a segment
-            PRODUCER_LOGGER.finer("Took segment $segment")
-
-            if(segment.jobs.isEmpty()) {  // skip (erroneously) empty segment
-                PRODUCER_LOGGER.warning("Skipped empty segment $segment. This shouldn't happen. Check if you have any errors in your segmentation code.")
-                continue
+            // Filter entirely skipped segments
+            val usedSegments = pipeline.segments.dropWhile { segment ->
+                val lastJobIndexInSegment = segment.startIndex + segment.jobs.size - 1
+                lastJobIndexInSegment < startJobIndex
             }
 
-            if(segment.isGroupSegment) {  // if the operation_mode is group: post a task with the segment in the root folder
-                PRODUCER_LOGGER.finer("Enqueueing group segment $segment")
-                send(Task(currentWorkingDirectory, segment.jobs))
-                taskWaitGroup.add()
-            }
-            else {  // if the operation_mode is individual: post tasks with the segment for each entry folder
-                LOGGER.finer("Enqueueing individual segment $segment")
-                contentDirectory.listFiles().forEach { entryDir ->
-                    send(Task(entryDir, segment.jobs))
-                    taskWaitGroup.add()
-                    PRODUCER_LOGGER.finest("Enqueued task chain from segment $segment for entry $entryDir")
+            var isFirstSegment = true
+            // iterate non-skipped segments in pipeline
+            for(segment in usedSegments) {  // take a segment
+                PRODUCER_LOGGER.finer("Took segment $segment")
+
+                if(segment.jobs.isEmpty()) {  // skip (erroneously) empty segment
+                    PRODUCER_LOGGER.warning("Skipped empty segment $segment. This shouldn't happen. Check if you have any errors in your segmentation code.")
+                    continue
                 }
+
+                val usedJobs = if(isFirstSegment) {
+                    val jobsToSkipInSegment = startJobIndex - segment.startIndex
+                    segment.jobs.drop(jobsToSkipInSegment)
+                } else segment.jobs
+
+                if(segment.isGroupSegment) {  // if the operation_mode is group: post a task with the segment in the root folder
+                    PRODUCER_LOGGER.finer("Enqueueing group segment $segment")
+                    send(Task(currentWorkingDirectory, usedJobs))
+                    taskWaitGroup.add()
+                }
+                else {  // if the operation_mode is individual: post tasks with the segment for each entry folder
+                    LOGGER.finer("Enqueueing individual segment $segment")
+                    contentDirectory.listFiles().forEach { entryDir ->
+                        send(Task(entryDir, usedJobs))
+                        taskWaitGroup.add()
+                        PRODUCER_LOGGER.finest("Enqueued task chain from segment $segment for entry $entryDir")
+                    }
+                }
+
+                // wait for the segment tasks to finish before posting the next segment
+                PRODUCER_LOGGER.finer("Waiting for segment to finish")
+                taskWaitGroup.wait()
+                PRODUCER_LOGGER.finer("Segment finished")
+
+                isFirstSegment = false
             }
 
-            // wait for the segment tasks to finish before posting the next segment
-            PRODUCER_LOGGER.finer("Waiting for segment to finish")
-            taskWaitGroup.wait()
-            PRODUCER_LOGGER.finer("Segment finished")
+            // all segments done
+            PRODUCER_LOGGER.fine("Finished")
         }
-
-        // all segments done
-        PRODUCER_LOGGER.fine("Finished")
-    }
 
     // PROCESSOR CODE
     private fun CoroutineScope.launchTaskProcessor(

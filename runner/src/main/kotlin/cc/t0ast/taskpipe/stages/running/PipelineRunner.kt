@@ -17,7 +17,7 @@ abstract class PipelineRunner(currentWorkingDirectory: File) {
     lateinit var moduleDataDirectory: File
         private set
 
-    open suspend fun run(pipeline: SegmentedPipeline) {
+    open suspend fun run(pipeline: SegmentedPipeline, startJobIndex: Int = 0) {
         this.contentDirectory.mkdirs()
         this.moduleDataDirectory.mkdirs()
     }
