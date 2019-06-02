@@ -31,6 +31,11 @@ class Args(parser: ArgParser) {
     ) { toInt() }
         .default(0)
 
+    val startBreakpoint: String? by parser.storing(
+        "--start-from",
+        help = "from which breakpoint to start the execution\nOverrides --start-from-n"
+    ).default<String?>(null)
+
     val isVerbose by parser.flagging(
         "-v", "--verbose",
         help = "enables verbose mode; In verbose mode all output from the pipeline runner is printed to the console."

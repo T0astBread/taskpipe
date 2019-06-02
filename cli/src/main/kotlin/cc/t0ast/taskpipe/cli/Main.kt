@@ -14,8 +14,20 @@ class Main {
                 val cliArgs = this
                 cliArgs.outputDirectory.mkdirs()
                 shouldOutputLogs = cliArgs.isVerbose
+
                 runBlocking {
-                    executePipeline(cliArgs.pipelineDirectory, cliArgs.outputDirectory, cliArgs.startJobIndex)
+                    if (cliArgs.startBreakpoint !== null)
+                        executePipeline(
+                            cliArgs.pipelineDirectory,
+                            cliArgs.outputDirectory,
+                            cliArgs.startBreakpoint!!
+                        )
+                    else
+                        executePipeline(
+                            cliArgs.pipelineDirectory,
+                            cliArgs.outputDirectory,
+                            cliArgs.startJobIndex
+                        )
                 }
                 println("Done")
             }
