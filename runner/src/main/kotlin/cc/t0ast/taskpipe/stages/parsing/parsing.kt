@@ -1,6 +1,7 @@
 package cc.t0ast.taskpipe.stages.parsing
 
 import cc.t0ast.taskpipe.OperationMode
+import cc.t0ast.taskpipe.modules.BreakpointModule
 import cc.t0ast.taskpipe.modules.Module
 import cc.t0ast.taskpipe.modules.ProcessModule
 import cc.t0ast.taskpipe.stages.parsing.dtos.JobDTO
@@ -14,8 +15,8 @@ private val GSON = Gson()
 
 fun parsePipeline(pipelineDir: File): ParsedPipeline {
     val pipelineDTO = loadPipeline(pipelineDir)
-    val moduleDTOs = loadModules(pipelineDTO, pipelineDir)
-    val jobs = loadJobs(pipelineDTO, moduleDTOs)
+    val modules = loadModules(pipelineDTO, pipelineDir)
+    val jobs = loadJobs(pipelineDTO, modules)
     return ParsedPipeline(pipelineDTO.name, jobs)
 }
 
@@ -27,9 +28,9 @@ private fun loadPipeline(pipelineDir: File): PipelineDTO {
     return pipeline
 }
 
-private fun loadModules(pipeline: PipelineDTO, pipelineDir: File): Map<String, ModuleDTO> {
+private fun loadModules(pipeline: PipelineDTO, pipelineDir: File): Map<String, Module> {
     val modulesDir = File(pipelineDir, "modules")
-    val loadedModules = mutableMapOf<String, ModuleDTO>()
+    val loadedModules = mutableMapOf<String, Module>()
     pipeline.jobs.forEach { job ->
         if(!loadedModules.containsKey(job.module)) {
             loadedModules[job.module] = loadModule(modulesDir, job.module)
@@ -38,14 +39,24 @@ private fun loadModules(pipeline: PipelineDTO, pipelineDir: File): Map<String, M
     return loadedModules
 }
 
-private fun loadModule(modulesDir: File, moduleName: String): ModuleDTO {
+private fun loadModule(modulesDir: File, moduleName: String): Module {
+    return loadEmbeddedModule(moduleName) ?: loadProcessModule(modulesDir, moduleName)
+}
+
+private fun loadEmbeddedModule(moduleName: String): Module? =
+    when(moduleName) {
+        "breakpoint" -> BreakpointModule()
+        else -> null
+    }
+
+private fun loadProcessModule(modulesDir: File, moduleName: String): Module {
     try {
         val moduleFile = File(modulesDir, "$moduleName/module.json")
-        val module = moduleFile.reader().use { reader ->
+        val moduleDTO = moduleFile.reader().use { reader ->
             GSON.fromJson(reader, ModuleDTO::class.java)
         }
-        module.directory = File(modulesDir, moduleName)
-        return module
+        moduleDTO.directory = File(modulesDir, moduleName)
+        return moduleDTO.toRealModule()
     } catch (exception: Exception) {
         throw RuntimeException("Failed while parsing module $moduleName", exception)
     }
@@ -66,11 +77,10 @@ fun ModuleDTO.toRealModule(): Module {
     return ProcessModule(this.name, supportedOperationModes, usedRunCommand, this.directory)
 }
 
-private fun loadJobs(pipelineDTO: PipelineDTO, moduleDTOs: Map<String, ModuleDTO>): List<Job> {
+private fun loadJobs(pipelineDTO: PipelineDTO, modules: Map<String, Module>): List<Job> {
     return pipelineDTO.jobs.map { jobDTO ->
         try {
-            val moduleDTO = moduleDTOs[jobDTO.module] ?: throw RuntimeException("Module ${jobDTO.module} was not found")
-            val module = moduleDTO.toRealModule()
+            val module = modules[jobDTO.module] ?: throw RuntimeException("Module ${jobDTO.module} was not found")
             val operationMode = getUsedOperationMode(jobDTO, module)
             return@map Job(module, operationMode, jobDTO.arguments)
         } catch (exception: Exception) {

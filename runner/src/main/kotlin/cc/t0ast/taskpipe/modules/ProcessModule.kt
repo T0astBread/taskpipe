@@ -1,6 +1,7 @@
 package cc.t0ast.taskpipe.modules
 
 import cc.t0ast.taskpipe.OperationMode
+import cc.t0ast.taskpipe.stages.running.RunContext
 import cc.t0ast.taskpipe.utils.logging.getLogger
 import cc.t0ast.taskpipe.utils.splitIntoArgs
 import java.io.File
@@ -19,7 +20,7 @@ class ProcessModule(
         val moduleDir: File
 ): Module() {
 
-    override suspend fun run(workingDirectory: File, arguments: Map<String, Any>) {
+    override suspend fun run(runContext: RunContext, workingDirectory: File, arguments: Map<String, Any>) {
         val expandedArgs = arguments.toMutableMap()
         expandedArgs["module_dir"] = this.moduleDir.absolutePath
 
