@@ -13,6 +13,7 @@ class ParallelRunContext(private val taskProducer: ReceiveChannel<Task>) : RunCo
     override fun stopExecution(reason: String, additionalData: Any?) {
         super.stopExecution(reason, additionalData)
 
+        this.isStopped = true
         this.taskProducer.cancel()
         this.taskProcessors.forEach { it.cancel() }
     }
