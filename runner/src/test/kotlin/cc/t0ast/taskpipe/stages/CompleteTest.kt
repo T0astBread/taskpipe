@@ -1,15 +1,19 @@
 package cc.t0ast.taskpipe.stages
 
+import cc.t0ast.taskpipe.executePipeline
 import cc.t0ast.taskpipe.stages.parsing.parsePipeline
 import cc.t0ast.taskpipe.stages.running.ParallelPipelineRunner
 import cc.t0ast.taskpipe.stages.segmentation.segment
 import cc.t0ast.taskpipe.test_utils.AMOUNT_OF_ENTRIES_IN_RUN
 import cc.t0ast.taskpipe.test_utils.EXAMPLE_PIPELINE_DIR
+import cc.t0ast.taskpipe.test_utils.EXAMPLE_PIPELINE_WITH_BREAKPOINT_DIR
 import cc.t0ast.taskpipe.test_utils.createTestDirectory
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
+import java.lang.AssertionError
 import java.util.stream.IntStream
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -29,7 +33,30 @@ class CompleteTest {
         checkGeneratedFilesystem(testDir)
     }
 
-    private fun checkGeneratedFilesystem(rootDir: File) {
+    @Test
+    fun testAllStagesFromBreakpoint() {
+        val testDir = createTestDirectory()
+
+        runBlocking {
+            executePipeline(
+                EXAMPLE_PIPELINE_WITH_BREAKPOINT_DIR,
+                testDir,
+                0
+            )
+
+            checkGeneratedFilesystem(testDir, false)
+
+            executePipeline(
+                EXAMPLE_PIPELINE_WITH_BREAKPOINT_DIR,
+                testDir,
+                "test"
+            )
+
+            checkGeneratedFilesystem(testDir, true)
+        }
+    }
+
+    private fun checkGeneratedFilesystem(rootDir: File, checkEntries: Boolean = true) {
         assert(rootDir.exists())
         assert(rootDir.isDirectory)
 
@@ -42,7 +69,8 @@ class CompleteTest {
 
         IntStream.rangeClosed(1, AMOUNT_OF_ENTRIES_IN_RUN).forEach { assert(entries.contains("entry$it")) }
 
-        entries.map { File(contentDir, it) }
+        if (checkEntries)
+            entries.map { File(contentDir, it) }
                 .forEach { checkGeneratedEntryFilesystem(it) }
     }
 

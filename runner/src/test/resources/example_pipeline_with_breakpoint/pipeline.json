@@ -10,6 +10,7 @@
 		{
 			"module": "breakpoint",
 			"arguments": {
+				"name": "test",
 				"message": "This is a test breakpoint; Verify that it works correctly!"
 			}
 		},
