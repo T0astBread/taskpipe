@@ -9,6 +9,7 @@ plugins {
 
 group = "cc.t0ast.taskpipe"
 version = "0.1-SNAPSHOT"
+application.mainClassName = "cc.t0ast.taskpipe.cli.Main"
 
 repositories {
     mavenCentral()
@@ -31,7 +32,7 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Jar> {
     manifest.attributes.apply {
-        put("Main-Class", "cc.t0ast.taskpipe.cli.Main")
+        put("Main-Class", application.mainClassName)
     }
     from(configurations.runtime.map { if (it.isDirectory) it else zipTree(it) })
 }
