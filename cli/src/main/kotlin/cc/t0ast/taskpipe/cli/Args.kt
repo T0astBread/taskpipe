@@ -26,7 +26,7 @@ class Args(parser: ArgParser) {
         .default { generatedOutputDir!! }
 
     val startJobIndex by parser.storing(
-        "--start-from",
+        "--start-from-n",
         help = "from which job index to start the execution (default is 0)"
     ) { toInt() }
         .default(0)
