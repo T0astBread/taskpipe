@@ -22,7 +22,7 @@ class ProcessModule(
 
     override suspend fun run(runContext: RunContext, workingDirectory: File, arguments: Map<String, Any>) {
         val expandedArgs = arguments.toMutableMap()
-        expandedArgs["module_dir"] = this.moduleDir.absolutePath
+        expandedArgs["module_dir"] = this.moduleDir.absolutePath.replace("\\", "\\\\")
 
         val bakedRunCommand = this.runCommand.bakeWith(expandedArgs)
         val bakedRunCommandArgs = bakedRunCommand.splitIntoArgs()
